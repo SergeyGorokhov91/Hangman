@@ -3,6 +3,8 @@ package ru.sergey.hangman.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import ru.sergey.hangman.repository.WordRepository;
+
 import java.io.*;
 
 @Component

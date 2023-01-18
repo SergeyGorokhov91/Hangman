@@ -1,6 +1,7 @@
 package ru.sergey.hangman.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
@@ -10,6 +11,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import ru.sergey.hangman.config.BotConfig;
+import ru.sergey.hangman.repository.WordRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,23 +45,27 @@ public class Hangman extends TelegramLongPollingBot {
 
 
     @Autowired
-    WordRepository wordRepo;
+    private WordRepository wordRepo;
+    
+    @Autowired
+    final BotConfig config;
 
     ConcurrentMap<Long, Game> game = new ConcurrentHashMap<>();//watch spring concurrency model
 
-    public Hangman(WordRepository wordRepo) {
+    public Hangman(WordRepository wordRepo,BotConfig config) {
     	this.wordRepo = wordRepo;
+    	this.config = config;
         menuExecute();
     }
 
     @Override
     public String getBotUsername() {
-        return "Hangman_Palachino_bot";
+        return config.getBotName();
     }
 
     @Override
     public String getBotToken() {
-        return "5886873069:AAGYXuC090ySqSKaH0vpnNOVYWqpgY1CT8E";
+        return config.getBotToken();
     }
 
     @Override
@@ -205,10 +213,6 @@ public class Hangman extends TelegramLongPollingBot {
         }
     }
 
-    /**
-     * Спорная реализация, надо подумать как сделать нормально
-     * @param chatId
-     */
     private void putWordInCurrentGame(long chatId) {
     	Random random = new Random();
         String word = wordRepo.findById(random.nextLong(51350)+1).get().getWord();
