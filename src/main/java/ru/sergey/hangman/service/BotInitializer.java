@@ -11,23 +11,32 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import ru.sergey.hangman.config.BotConfig;
 import ru.sergey.hangman.repository.WordRepository;
+import ru.sergey.hangman.service.cache.GamesList;
+import ru.sergey.hangman.service.messages.MessageSender;
+import ru.sergey.hangman.service.states.GameContext;
 
 @Component
 public class BotInitializer {
     @Autowired
     Hangman hangman;
-    
+       
     @Autowired
-    WordRepository wordRepo;
+    GameContext currentContext;
     
     @Autowired
     BotConfig config;
-
+    
+    @Autowired
+    GamesList gamesList;
+    
+    @Autowired
+    MessageSender messageSender;
+    	
     @EventListener({ContextRefreshedEvent.class})
     public void inti() throws TelegramApiException {
         try {
             TelegramBotsApi tba = new TelegramBotsApi(DefaultBotSession.class);
-            tba.registerBot(new Hangman(wordRepo,config));
+            tba.registerBot(new Hangman(currentContext, config, messageSender, gamesList));
         } catch (TelegramApiException e) {
 
         }
