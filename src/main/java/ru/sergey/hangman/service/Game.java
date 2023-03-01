@@ -13,9 +13,7 @@ public class Game {
     private AtomicInteger mistakesCtr = new AtomicInteger();
     private String word;
 
-    public Game() {
-
-    }
+    public Game() {}
 
     public void setWord(String word) {
         this.word=word;
